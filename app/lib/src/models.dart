@@ -23,6 +23,7 @@ const Map<String, String> tomoTskuAppNames = {
   'meshitomo': '飯とも！',
   'inutomo': '犬とも！',
   'tsuritomo': '釣りとも！',
+  'nekotomo': 'ニーアキャット',
   'costomo': 'コスとも！',
 };
 
