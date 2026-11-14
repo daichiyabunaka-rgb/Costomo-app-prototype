@@ -52,8 +52,8 @@ class _HomeShellState extends State<HomeShell> {
             label: 'コミュニティ',
           ),
           NavigationDestination(
-            icon: Icon(Icons.pets_outlined),
-            selectedIcon: Icon(Icons.pets),
+            icon: Icon(Icons.swap_horiz_outlined),
+            selectedIcon: Icon(Icons.swap_horiz),
             label: 'ゆずりあい',
           ),
           NavigationDestination(

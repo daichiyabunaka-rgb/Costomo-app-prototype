@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.pets,
+                Icon(Icons.theater_comedy,
                     size: 64, color: theme.colorScheme.primary),
                 const SizedBox(height: 12),
                 Text('コスとも！',

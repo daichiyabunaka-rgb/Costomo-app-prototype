@@ -141,7 +141,7 @@ class _SpotPageState extends State<SpotPage> {
       padding: const EdgeInsets.only(top: 24),
       child: Column(
         children: [
-          Icon(Icons.pets, size: 40, color: Colors.grey.shade500),
+          Icon(Icons.photo_camera, size: 40, color: Colors.grey.shade500),
           const SizedBox(height: 8),
           Text('近くに撮影スポットが見つかりませんでした。',
               style: theme.textTheme.bodySmall),

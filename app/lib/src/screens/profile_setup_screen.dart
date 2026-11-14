@@ -522,7 +522,7 @@ class _AddCategorySheet extends StatefulWidget {
 
 class _AddCategorySheetState extends State<_AddCategorySheet> {
   final TextEditingController _name = TextEditingController();
-  String _selectedIcon = 'pets';
+  String _selectedIcon = 'camera';
   bool _submitting = false;
 
   @override

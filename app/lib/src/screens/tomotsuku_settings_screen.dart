@@ -132,7 +132,7 @@ class _TomoTskuSettingsScreenState extends State<TomoTskuSettingsScreen> {
         child: Row(
           children: [
             Icon(
-              isThisApp ? Icons.pets : Icons.apps,
+              isThisApp ? Icons.theater_comedy : Icons.apps,
               color: theme.colorScheme.primary,
             ),
             const SizedBox(width: 12),
