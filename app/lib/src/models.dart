@@ -413,25 +413,26 @@ class CommunityEvent {
   }
 }
 
-/// 衣装・グッズの「ゆずりあい・交換」掲示板（近隣での情報共有）。
-/// kind: 'give'   = 衣装・グッズをゆずります
-///       'wanted' = 衣装・グッズを探しています
-///       'trade'  = 交換します
-/// 金銭取引は行わない（イベント会場や公共の場での受け渡し・ゆずり合い前提）。
-class CostumeExchange {
+/// コスプレの「撮影報告」掲示板（近隣での写真・画像・創作の報告・共有）。
+/// kind: 'shoot' = 撮影（撮ってきた写真の報告）
+///       'spot'  = 場所（撮影スポットの報告）
+///       'event' = イベント（イベント会場での撮影報告）
+///       'art'   = 絵（描いた絵・ファンアートの投稿）
+/// 被写体・撮影者・場所の許諾を確認できた画像のみ投稿する。
+class ShootReport {
   final String id;
   final String posterId;
-  final String kind; // 'give' | 'wanted' | 'trade'
-  final String itemDescription; // 衣装名・キャラ名・サイズなど
-  final String areaName; // 受け渡し希望地域やイベント名
-  final String detail; // 状態・受け渡し方法の自由記述
-  final String? photoPath; // 投稿写真（端末内パス or 公開URL）
+  final String kind; // 'shoot' | 'spot' | 'event' | 'art'
+  final String itemDescription; // キャラ名・作品名・一言タイトル
+  final String areaName; // 撮影した場所・イベント名
+  final String detail; // 撮影状況・ハイライトなどの自由記述
+  final String? photoPath; // 報告写真（端末内パス or 公開URL）
   final double lat;
   final double lng;
   final DateTime createdAt;
   bool closed; // 完了（受け渡し・交換が成立した等）
 
-  CostumeExchange({
+  ShootReport({
     required this.id,
     required this.posterId,
     required this.kind,
@@ -445,14 +446,17 @@ class CostumeExchange {
     this.closed = false,
   });
 
-  /// ゆずります
-  bool get isGive => kind == 'give';
+  /// 撮影の報告
+  bool get isShoot => kind == 'shoot';
 
-  /// 探しています
-  bool get isWanted => kind == 'wanted';
+  /// 場所の報告
+  bool get isSpot => kind == 'spot';
 
-  /// 交換します
-  bool get isTrade => kind == 'trade';
+  /// イベントの報告
+  bool get isEvent => kind == 'event';
+
+  /// 描いた絵・イラストの投稿
+  bool get isArt => kind == 'art';
 }
 
 class ChatMessage {

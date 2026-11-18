@@ -801,11 +801,11 @@ extension CommunityData on SupabaseData {
 
   // ---------------------------------------------------- protected cats
 
-  CostumeExchange _rowToCostumeExchange(Map<String, dynamic> row) {
+  ShootReport _rowToShootReport(Map<String, dynamic> row) {
     final gh = row['location_geohash'] as String?;
     final (lat, lng) =
         gh == null ? (0.0, 0.0) : geohashDecode(gh);
-    return CostumeExchange(
+    return ShootReport(
       id: row['id'] as String,
       posterId: row['poster_id'] as String,
       kind: row['kind'] as String,
@@ -820,20 +820,20 @@ extension CommunityData on SupabaseData {
     );
   }
 
-  /// 近くのゆずりあい・交換の登録（geohash 先頭4桁一致 = 約20km四方）
-  Future<List<CostumeExchange>> fetchCostumeExchanges(AppUser me) async {
+  /// 近くの撮影報告（geohash 先頭4桁一致 = 約20km四方）
+  Future<List<ShootReport>> fetchShootReports(AppUser me) async {
     final rows = await _c
-        .from('costume_exchanges')
+        .from('shoot_reports')
         .select()
         .order('created_at', ascending: false)
         .limit(100);
     final myPrefix = geohashEncode(me.lat, me.lng, precision: 4);
-    final cats = <CostumeExchange>[];
+    final cats = <ShootReport>[];
     for (final row in (rows as List).cast<Map<String, dynamic>>()) {
       try {
         final gh = row['location_geohash'] as String?;
         if (gh == null || !gh.startsWith(myPrefix)) continue;
-        cats.add(_rowToCostumeExchange(row));
+        cats.add(_rowToShootReport(row));
       } catch (_) {
         // 壊れた行は読み飛ばす
       }
@@ -841,8 +841,8 @@ extension CommunityData on SupabaseData {
     return cats;
   }
 
-  /// ゆずりあい・交換を登録する
-  Future<CostumeExchange> createCostumeExchange({
+  /// 撮影報告を登録する
+  Future<ShootReport> createShootReport({
     required String kind,
     required String itemDescription,
     required String areaName,
@@ -851,7 +851,7 @@ extension CommunityData on SupabaseData {
     required double lng,
     String? photoPath,
   }) async {
-    final rows = await _c.from('costume_exchanges').insert({
+    final rows = await _c.from('shoot_reports').insert({
       'poster_id': _myId,
       'kind': kind,
       'item_description': itemDescription,
@@ -860,11 +860,11 @@ extension CommunityData on SupabaseData {
       'photo_path': photoPath,
       'location_geohash': geohashEncode(lat, lng, precision: 6),
     }).select();
-    return _rowToCostumeExchange((rows as List).first as Map<String, dynamic>);
+    return _rowToShootReport((rows as List).first as Map<String, dynamic>);
   }
 
   /// 登録を解決済みにする（本人のみ、RLSで担保）
-  Future<void> closeCostumeExchange(String id) async {
-    await _c.from('costume_exchanges').update({'closed': true}).eq('id', id);
+  Future<void> closeShootReport(String id) async {
+    await _c.from('shoot_reports').update({'closed': true}).eq('id', id);
   }
 }

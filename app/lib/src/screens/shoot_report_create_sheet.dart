@@ -6,9 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import '../services/app_state.dart';
 import '../services/icon_service.dart';
 
-/// ゆずりあい・交換の登録シート（FR-7-1相当）。
-/// kind: 'give'（ゆずります）/ 'wanted'（探しています）/ 'trade'（交換します）
-Future<void> showCostumeExchangeCreateSheet(BuildContext context) {
+/// 撮影報告の登録シート（FR-7-1相当）。
+/// kind: 'shoot'（撮影）/ 'spot'（場所）/ 'event'（イベント）/ 'art'（絵）
+Future<void> showShootReportCreateSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -27,8 +27,8 @@ class _CreateSheetState extends State<_CreateSheet> {
   final _itemDescription = TextEditingController();
   final _areaName = TextEditingController();
   final _detail = TextEditingController();
-  String _kind = 'give';
-  String? _photoPath; // 選択した投稿写真（null=未選択, ''=解除）
+  String _kind = 'shoot';
+  String? _photoPath; // 選択した報告写真（null=未選択, ''=解除）
   bool _submitting = false;
 
   @override
@@ -50,7 +50,7 @@ class _CreateSheetState extends State<_CreateSheet> {
     if (!_isValid || _submitting) return;
     setState(() => _submitting = true);
     try {
-      await appState.registerCostumeExchange(
+      await appState.registerShootReport(
         kind: _kind,
         itemDescription: _itemDescription.text.trim(),
         areaName: _areaName.text.trim(),
@@ -63,7 +63,7 @@ class _CreateSheetState extends State<_CreateSheet> {
         setState(() => _submitting = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('登録に失敗しました。通信状況を確認してください'),
+            content: Text('報告に失敗しました。通信状況を確認してください'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -74,7 +74,7 @@ class _CreateSheetState extends State<_CreateSheet> {
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('登録しました。近くのユーザーに表示されます'),
+        content: Text('報告しました。近くのユーザーに表示されます'),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -92,26 +92,31 @@ class _CreateSheetState extends State<_CreateSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('ゆずりあい・交換を登録する',
+            Text('撮影報告を投稿する',
                 style: theme.textTheme.titleLarge!
                     .copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             SegmentedButton<String>(
               segments: const [
                 ButtonSegment(
-                  value: 'give',
-                  icon: Icon(Icons.redeem),
-                  label: Text('ゆずります'),
+                  value: 'shoot',
+                  icon: Icon(Icons.photo_camera),
+                  label: Text('撮影'),
                 ),
                 ButtonSegment(
-                  value: 'wanted',
-                  icon: Icon(Icons.search),
-                  label: Text('探してます'),
+                  value: 'spot',
+                  icon: Icon(Icons.place),
+                  label: Text('場所'),
                 ),
                 ButtonSegment(
-                  value: 'trade',
-                  icon: Icon(Icons.swap_horiz),
-                  label: Text('交換します'),
+                  value: 'event',
+                  icon: Icon(Icons.celebration),
+                  label: Text('イベント'),
+                ),
+                ButtonSegment(
+                  value: 'art',
+                  icon: Icon(Icons.palette),
+                  label: Text('絵'),
                 ),
               ],
               selected: {_kind},
@@ -119,14 +124,18 @@ class _CreateSheetState extends State<_CreateSheet> {
             ),
             const SizedBox(height: 4),
             Text(
-              _kind == 'give'
-                  ? '使わなくなった衣装・グッズをゆずる場合の登録です。\n'
-                      '※金銭のやりとりは禁止です。受け渡しはイベント会場や公共の場で行ってください。'
-                  : _kind == 'wanted'
-                      ? '探している衣装・グッズの登録です。\n'
-                          '※個人の住所・連絡先は記入しないでください。DMでやりとりしましょう。'
-                      : '衣装・グッズの交換の登録です。\n'
-                          '※金銭のやりとりは禁止です。同価値での交換を前提とし、条件はDMで相談してください。',
+              _kind == 'shoot'
+                  ? '撮ってきたコスプレ写真の報告です。\n'
+                      '※本人が写る画像は本人・撮影者の許諾を得たものだけ投稿してください。'
+                  : _kind == 'spot'
+                      ? 'おすすめの撮影スポット・状況の報告です。\n'
+                          '※私有地・撮影禁止場所の無断撮影はやめましょう。'
+                      : _kind == 'event'
+                          ? 'イベント会場での撮影報告です。\n'
+                              '※会場の撮影規約・参加者の許諾を守ってください。'
+                          : '描いた絵・ファンアートの投稿です。\n'
+                              '※他人の作品の無断転載・トレースは禁止です。'
+                              '成人向けの画像も投稿できません。',
               style: theme.textTheme.labelSmall!
                   .copyWith(color: Colors.grey.shade600),
             ),
@@ -135,16 +144,16 @@ class _CreateSheetState extends State<_CreateSheet> {
               controller: _itemDescription,
               maxLength: 40,
               decoration: const InputDecoration(
-                labelText: '衣装・グッズの内容',
-                hintText: '例: ○○のNPC衣装（女子M位・ウィッグ付き）',
+                labelText: 'タイトル（キャラ名・作品名など）',
+                hintText: '例: ○○の学生服を撮影してきました',
                 border: OutlineInputBorder(),
                 counterText: '',
               ),
             ),
             const SizedBox(height: 12),
 
-            // ------------------------------ 投稿写真（任意）
-            Text('写真（任意。状態が伝わる写真を）',
+            // ------------------------------ 報告写真（任意）
+            Text('写真（任意。報告の画像を）',
                 style: theme.textTheme.titleSmall),
             const SizedBox(height: 8),
             Row(
@@ -186,9 +195,9 @@ class _CreateSheetState extends State<_CreateSheet> {
               controller: _areaName,
               maxLength: 30,
               decoration: InputDecoration(
-                labelText: _kind == 'wanted' ? '探している地域・イベント名' : '受け渡し希望の地域・イベント名',
-                hintText: '例: ○○市周辺 / コミケ会場',
-                border: const OutlineInputBorder(),
+                labelText: _kind == 'art' ? '地域・イベント名（絵は任意）' : '撮影した場所',
+                hintText: '例: ○○市中央公園 / ○○イベント会場',
+                border: OutlineInputBorder(),
                 counterText: '',
               ),
             ),
@@ -198,8 +207,8 @@ class _CreateSheetState extends State<_CreateSheet> {
               maxLines: 3,
               maxLength: 200,
               decoration: const InputDecoration(
-                labelText: '状態・条件・受け渡し方法など',
-                hintText: '例: 着用2回・タグなし。○○のイベント会場で受け渡しできます',
+                labelText: '撮影状況・ハイライトなど',
+                hintText: '例: 夕方の斜光で撮影。時間帯もおすすめです',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -210,7 +219,7 @@ class _CreateSheetState extends State<_CreateSheet> {
                 onPressed: (_isValid && !_submitting) ? _submit : null,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 14),
-                  child: Text('登録する'),
+                  child: Text('報告する'),
                 ),
               ),
             ),
@@ -222,7 +231,7 @@ class _CreateSheetState extends State<_CreateSheet> {
 
   bool get _isValid =>
       _itemDescription.text.trim().isNotEmpty &&
-      _areaName.text.trim().isNotEmpty;
+      (_kind == 'art' || _areaName.text.trim().isNotEmpty);
 
   Widget _photoPreview(ThemeData theme) {
     final path = (_photoPath ?? '');

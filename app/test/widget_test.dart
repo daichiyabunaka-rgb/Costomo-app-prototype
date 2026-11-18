@@ -183,7 +183,7 @@ void main() {
   });
 
   group('端末内スナップショット（モック永続化）', () {
-    test('募集・ゆずりあい・コミュニティは保存用Mapとの往復ができる', () {
+    test('募集・撮影報告・コミュニティは保存用Mapとの往復ができる', () {
       final now = DateTime(2026, 3, 1, 12, 0);
       final rec = Recruitment(
         id: 'r-1',
@@ -203,21 +203,21 @@ void main() {
       expect(restored.title, rec.title);
       expect(restored.memberIds, rec.memberIds);
 
-      final item = CostumeExchange(
+      final item = ShootReport(
         id: 'cx-1',
         posterId: 'me',
-        kind: 'give',
-        itemDescription: 'テスト衣装（男子Lかぶり物付き）',
+        kind: 'shoot',
+        itemDescription: '○○の衣装を撮影してきました',
         areaName: 'テスト駅',
-        detail: 'イベント会場で受け渡し',
+        detail: '夕方の光で撮影しました',
         lat: 35.0,
         lng: 139.0,
         createdAt: now,
         photoPath: '/data/user/0/cosplay_item_photos/item_photo_1.jpg',
       );
-      final restoredItem = persist.costumeExchangeFromMap(
-          persist.costumeExchangeToMap(item));
-      expect(restoredItem!.kind, 'give');
+      final restoredItem = persist.shootReportFromMap(
+          persist.shootReportToMap(item));
+      expect(restoredItem!.kind, 'shoot');
       expect(restoredItem.photoPath, item.photoPath);
       expect(restoredItem.createdAt, item.createdAt);
 
@@ -262,10 +262,10 @@ void main() {
         expiresAt: now.subtract(const Duration(hours: 1)),
         memberIds: const ['me'],
       );
-      final othersItem = CostumeExchange(
+      final othersItem = ShootReport(
         id: 'pd-other',
         posterId: 'someone-else',
-        kind: 'give',
+        kind: 'shoot',
         itemDescription: '他人の投稿',
         areaName: 'どこか',
         detail: '',
@@ -273,10 +273,10 @@ void main() {
         lng: 139.0,
         createdAt: now,
       );
-      final myItem = CostumeExchange(
+      final myItem = ShootReport(
         id: 'pd-mine',
         posterId: 'me',
-        kind: 'give',
+        kind: 'shoot',
         itemDescription: '自分の投稿',
         areaName: 'どこか',
         detail: '',
@@ -286,14 +286,14 @@ void main() {
       );
       final snapshot = {
         'recruitments': [rec, expired].map(persist.recruitmentToMap).toList(),
-        'costumeExchanges': [othersItem, myItem].map(persist.costumeExchangeToMap).toList(),
+        'shootReports': [othersItem, myItem].map(persist.shootReportToMap).toList(),
       };
       final pruned = persist.pruneSnapshotToOwner(snapshot, 'me');
       final recIds =
           (pruned['recruitments'] as List).map((e) => e['id'] as String).toList();
       expect(recIds, ['r-mine']); // 期限切れは捨てる
       final itemIds =
-          (pruned['costumeExchanges'] as List).map((e) => e['id'] as String).toList();
+          (pruned['shootReports'] as List).map((e) => e['id'] as String).toList();
       expect(itemIds, ['pd-mine']); // 他人の投稿は捨てる
     });
   });
@@ -690,42 +690,44 @@ void main() {
       }
     });
 
-    test('ゆずりあい・交換: シードは近い順に並び、ゆずる・探す両方を含む', () {
+    test('撮影報告: シードは近い順に並び、撮影・場所・イベント・絵を含む', () {
       final state = AppState();
       state.attachUser(_testUser(state), reseed: true);
-      final items = state.costumeExchanges;
+      final items = state.shootReports;
       expect(items, isNotEmpty);
-      expect(items.any((p) => p.isGive), isTrue);
-      expect(items.any((p) => p.isWanted), isTrue);
+      expect(items.any((p) => p.isShoot), isTrue);
+      expect(items.any((p) => p.isSpot), isTrue);
+      expect(items.any((p) => p.isEvent), isTrue);
+      expect(items.any((p) => p.isArt), isTrue);
       final me = state.me!;
-      double km(CostumeExchange p) => haversineKm(me.lat, me.lng, p.lat, p.lng);
+      double km(ShootReport p) => haversineKm(me.lat, me.lng, p.lat, p.lng);
       for (var i = 1; i < items.length; i++) {
         expect(km(items[i - 1]), lessThanOrEqualTo(km(items[i])));
       }
       for (final p in items) {
         // 相対配置されているので全シードが現在地の近くにある
         expect(km(p), lessThan(6.0));
-        expect(state.costumeExchangeDistanceLabel(p), isNotEmpty);
+        expect(state.shootReportDistanceLabel(p), isNotEmpty);
       }
     });
 
-    test('ゆずりあい・交換: 登録して一覧に出し、完了で消える', () async {
+    test('撮影報告: 登録して一覧に出し、完了で消える', () async {
       final state = AppState();
       state.attachUser(_testUser(state), reseed: true);
-      final created = await state.registerCostumeExchange(
-        kind: 'give',
-        itemDescription: 'テスト衣装（男子L・かぶり物付き）',
-        areaName: 'テスト会場',
-        detail: '次のイベント会場で受け渡せます',
+      final created = await state.registerShootReport(
+        kind: 'shoot',
+        itemDescription: '○○の衣装を撮影してきました（テスト）',
+        areaName: 'テスト駅前',
+        detail: '夕方の光で撮影しました',
         photoPath: '/data/item_photos/item_photo_1.jpg',
       );
-      expect(created.isGive, isTrue);
+      expect(created.isShoot, isTrue);
       expect(created.photoPath, '/data/item_photos/item_photo_1.jpg');
       expect(
-          state.costumeExchanges.any((p) => p.id == created.id), isTrue);
-      await state.closeCostumeExchange(created.id);
+          state.shootReports.any((p) => p.id == created.id), isTrue);
+      await state.closeShootReport(created.id);
       expect(
-          state.costumeExchanges.any((p) => p.id == created.id), isFalse);
+          state.shootReports.any((p) => p.id == created.id), isFalse);
     });  });
 
   group('models', () {

@@ -291,7 +291,7 @@ List<Recruitment> seedRecruitments(DateTime now, List<AppUser> generalUsers) {
   ];
 }
 
-/// ゆずりあい・交換のシード。anchor（現在地）からの相対距離で配置する。
+/// 撮影報告のシード。anchor（現在地）からの相対距離で配置する。
 /// id が 'cx-seed-' 始まりのものは GPS 更新のたびに再配置される
 /// （AppState.applyGps を参照）。
 class _ExchangeSeedSpec {
@@ -313,11 +313,11 @@ const List<_ExchangeSeedSpec> _exchangeSeedSpecs = [
   _ExchangeSeedSpec(
     'cx-seed-1',
     'u-comic-nana',
-    'give',
-    '○○の学生服（男子M・タグ付き・着用2回）',
+    'shoot',
+    '○○の学生服で撮影してきました',
     '中央公園 周辺',
-    'サイズが合わなくなってしまったので、'
-        '使ってくださる方にゆずります。イベント会場での受け渡しもOKです。',
+    '夕方の斜光で綺麗に撮れました。同じ作品の'
+        'コス友達と一緒に撮影した報告です。',
     0.3,
     -0.6,
     Duration(hours: 2),
@@ -325,11 +325,11 @@ const List<_ExchangeSeedSpec> _exchangeSeedSpecs = [
   _ExchangeSeedSpec(
     'cx-seed-2',
     'u-anime-rei',
-    'wanted',
-    '○○の戦闘服（女子L・フルセット）を探しています',
-    '駅東側のイベント会場',
-    '来月のイベントで着たいです。お譲りできる方に'
-        '交換での対応も可能です。DMお待ちしています。',
+    'spot',
+    '駅東側のレンガ倉庫がおすすめ',
+    '駅東側のイベント会場横',
+    '平日は人が少なく撮りやすいです。手前の路地も'
+        '雰囲気が出ます。時間帯は朝の光がおすすめ。',
     -0.2,
     0.8,
     Duration(hours: 5),
@@ -337,23 +337,35 @@ const List<_ExchangeSeedSpec> _exchangeSeedSpecs = [
   _ExchangeSeedSpec(
     'cx-seed-3',
     'u-tokusatsu-sora',
-    'trade',
-    '特撮ヒーローのスーツ（自作・着用1回）と交換します',
+    'event',
+    '○○のイベント会場で特撮枠で参加',
     '河川敷リバーサイド公園 周辺',
-    '別のキャラのスーツと交換希望です。状態は写真で'
-        '送ります。場所はイベント会場が多いです。',
+    '会場のホール前に並ぶ装飾の前で撮影してきました。'
+        '来月も参加予定です。',
     -0.9,
     -0.3,
     Duration(hours: 26),
   ),
+  _ExchangeSeedSpec(
+    'cx-seed-4',
+    'u-anime-rei',
+    'art',
+    '○○のキャラを描いてみました',
+    '',
+    'コス衣装の参考にした塗り方を試してみました。'
+        '同じ作品好きの人と交流したいです。',
+    0.6,
+    0.5,
+    Duration(hours: 9),
+  ),
 ];
 
-List<CostumeExchange> buildSeedCostumeExchanges(
+List<ShootReport> buildSeedShootReports(
     DateTime now, double anchorLat, double anchorLng) {
   final cos = (anchorLat * math.pi / 180.0).abs().clamp(0.01, 1.0);
   return [
     for (final s in _exchangeSeedSpecs)
-      CostumeExchange(
+      ShootReport(
         id: s.id,
         posterId: s.posterId,
         kind: s.kind,
