@@ -291,7 +291,7 @@ List<Recruitment> seedRecruitments(DateTime now, List<AppUser> generalUsers) {
   ];
 }
 
-/// 撮影報告のシード。anchor（現在地）からの相対距離で配置する。
+/// 近況報告のシード。anchor（現在地）からの相対距離で配置する。
 /// id が 'cx-seed-' 始まりのものは GPS 更新のたびに再配置される
 /// （AppState.applyGps を参照）。
 class _ExchangeSeedSpec {
@@ -325,11 +325,11 @@ const List<_ExchangeSeedSpec> _exchangeSeedSpecs = [
   _ExchangeSeedSpec(
     'cx-seed-2',
     'u-anime-rei',
-    'spot',
-    '駅東側のレンガ倉庫がおすすめ',
-    '駅東側のイベント会場横',
-    '平日は人が少なく撮りやすいです。手前の路地も'
-        '雰囲気が出ます。時間帯は朝の光がおすすめ。',
+    'post',
+    '今週はウィッグの手入れをがんばりました',
+    '自宅周辺',
+    '次のイベントに向けた準備は順調です。'
+        '同じ作品のコス友達と情報交換したいです。',
     -0.2,
     0.8,
     Duration(hours: 5),

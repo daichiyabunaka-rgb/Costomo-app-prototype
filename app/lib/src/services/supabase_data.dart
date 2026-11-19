@@ -820,7 +820,7 @@ extension CommunityData on SupabaseData {
     );
   }
 
-  /// 近くの撮影報告（geohash 先頭4桁一致 = 約20km四方）
+  /// 近くの近況報告（geohash 先頭4桁一致 = 約20km四方）
   Future<List<ShootReport>> fetchShootReports(AppUser me) async {
     final rows = await _c
         .from('shoot_reports')
@@ -841,7 +841,7 @@ extension CommunityData on SupabaseData {
     return cats;
   }
 
-  /// 撮影報告を登録する
+  /// 近況報告を登録する
   Future<ShootReport> createShootReport({
     required String kind,
     required String itemDescription,

@@ -183,7 +183,7 @@ void main() {
   });
 
   group('端末内スナップショット（モック永続化）', () {
-    test('募集・撮影報告・コミュニティは保存用Mapとの往復ができる', () {
+    test('募集・近況報告・コミュニティは保存用Mapとの往復ができる', () {
       final now = DateTime(2026, 3, 1, 12, 0);
       final rec = Recruitment(
         id: 'r-1',
@@ -690,13 +690,13 @@ void main() {
       }
     });
 
-    test('撮影報告: シードは近い順に並び、撮影・場所・イベント・絵を含む', () {
+    test('近況報告: シードは近い順に並び、撮影・つぶやき・イベント・絵を含む', () {
       final state = AppState();
       state.attachUser(_testUser(state), reseed: true);
       final items = state.shootReports;
       expect(items, isNotEmpty);
       expect(items.any((p) => p.isShoot), isTrue);
-      expect(items.any((p) => p.isSpot), isTrue);
+      expect(items.any((p) => p.isPost), isTrue);
       expect(items.any((p) => p.isEvent), isTrue);
       expect(items.any((p) => p.isArt), isTrue);
       final me = state.me!;
@@ -711,7 +711,7 @@ void main() {
       }
     });
 
-    test('撮影報告: 登録して一覧に出し、完了で消える', () async {
+    test('近況報告: 登録して一覧に出し、完了で消える', () async {
       final state = AppState();
       state.attachUser(_testUser(state), reseed: true);
       final created = await state.registerShootReport(

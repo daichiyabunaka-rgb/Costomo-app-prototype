@@ -1,28 +1,30 @@
 -- ============================================================
 -- 0015_costomo_shoot_reports: コスとも！の特別機能を
---   「ゆずりあい・交換」→「撮影報告」に変更する
+--   「ゆずりあい・交換」→「撮影報告」へ、さらに「近況報告」へ変更する
 -- 対象: 共有Supabaseプロジェクト（変換マイグレーション・トランザクション）
 --
 -- 内容:
 --   1. costume_exchanges テーブルを public.shoot_reports にリネーム
---      - kind 制約を give/wanted/trade から shoot/spot/event/art へ差し替え
+--      - kind 制約を give/wanted/trade から shoot/post/event/art へ差し替え
 --        shoot = 撮影（撮ってきたコスプレ写真の報告）
---        spot  = 場所（撮影スポットの報告）
---        event = イベント（イベント会場での撮影報告）
+--        post  = つぶやき（近況・ひとことの報告）
+--        event = イベント（イベント会場での報告）
 --        art   = 絵（描いた絵・ファンアートの投稿）
 --      - 列名・制約・RLS・インデックスはそのまま（総合版アプリとの互換を維持）
 --   2. 既存行（ベータ検証で投稿された give/wanted/trade の3件・テストデータ）を削除
 --      - 古い kind は新しい制約に適合しないため
---   3. RLS ポリシー名を「撮影報告」用に付け替え（中身は同一）
+--   3. RLS ポリシー名を「近況報告」用に付け替え（中身は同一）
 --   4. delete_my_account() の costume_exchanges→shoot_reports 差し替え
 --
 -- 注記:
 --   - 投稿写真バケットは cosplay-item-photos をそのまま使う
 --     （Supabase のバケットリネームは不可のため。パスは <uid>/costomo/item_photo_*.jpg）
---   - 総合版（tomotsuku）の co hub のゆずりあいタブは本テーブルを参照する
+--   - 総合版（tomotsuku）のコスとも！ハブの投稿ボードは本テーブルを参照する
 --
 -- 前提: 0006_costomo が適用済みであること。
 --       番号順に適用する運用（提案006）に従うこと。
+-- 履歴: 2026-11-18 未適用のまま改訂（「撮影報告・場所」→「近況報告・つぶやき」へ
+--       名称変更したため。spot→post）
 -- ============================================================
 
 begin;
@@ -36,7 +38,7 @@ alter table public.costume_exchanges rename to public.shoot_reports;
 
 alter table public.shoot_reports drop constraint if exists costume_exchanges_kind_check;
 alter table public.shoot_reports add constraint shoot_reports_kind_check
-  check (kind in ('shoot', 'spot', 'event', 'art'));
+  check (kind in ('shoot', 'post', 'event', 'art'));
 
 create index if not exists shoot_reports_geohash_idx
   on public.shoot_reports (location_geohash);
@@ -53,14 +55,18 @@ drop policy if exists "撮影報告は誰でも閲覧可" on public.shoot_report
 drop policy if exists "撮影報告の登録は本人のみ" on public.shoot_reports;
 drop policy if exists "撮影報告の更新は本人のみ" on public.shoot_reports;
 drop policy if exists "撮影報告の削除は本人のみ" on public.shoot_reports;
+drop policy if exists "近況報告は誰でも閲覧可" on public.shoot_reports;
+drop policy if exists "近況報告の登録は本人のみ" on public.shoot_reports;
+drop policy if exists "近況報告の更新は本人のみ" on public.shoot_reports;
+drop policy if exists "近況報告の削除は本人のみ" on public.shoot_reports;
 
-create policy "撮影報告は誰でも閲覧可" on public.shoot_reports
+create policy "近況報告は誰でも閲覧可" on public.shoot_reports
   for select using (true);
-create policy "撮影報告の登録は本人のみ" on public.shoot_reports
+create policy "近況報告の登録は本人のみ" on public.shoot_reports
   for insert with check (auth.uid() = poster_id);
-create policy "撮影報告の更新は本人のみ" on public.shoot_reports
+create policy "近況報告の更新は本人のみ" on public.shoot_reports
   for update using (auth.uid() = poster_id);
-create policy "撮影報告の削除は本人のみ" on public.shoot_reports
+create policy "近況報告の削除は本人のみ" on public.shoot_reports
   for delete using (auth.uid() = poster_id);
 
 -- ------------------------------------------------------------

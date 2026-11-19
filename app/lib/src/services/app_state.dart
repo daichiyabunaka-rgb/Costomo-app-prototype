@@ -273,7 +273,7 @@ class AppState extends ChangeNotifier {
 
   /// リリース（ベータ配布）ビルドではモックデータを出さない。
   /// モックの一般ユーザー・店舗・シード募集・シードコミュニティ・
-  /// シードの撮影報告は開発・テスト（デバッグ）ビルドのみ。
+  /// シードの近況報告は開発・テスト（デバッグ）ビルドのみ。
   bool get _useMockData => !kReleaseMode;
 
   void _rebuildMockUsers() {
@@ -338,7 +338,7 @@ class AppState extends ChangeNotifier {
   }
 
   /// モックモードのドメイン初期化（端末内スナップショットの復元つき）。
-  /// 自分のデータ（募集・撮影報告・コミュニティ・部屋）を復元し、
+  /// 自分のデータ（募集・近況報告・コミュニティ・部屋）を復元し、
   /// 開発ビルドではシードが無い場合だけモックデータを補う。
   Future<void> _initMockDomain() async {
     _persistBusy = true;
@@ -379,7 +379,7 @@ class AppState extends ChangeNotifier {
   Timer? _persistDebounce;
   bool _persistBusy = false;
 
-  /// リリース（配布）ビルドのモックモードでは、自分の募集・撮影報告・
+  /// リリース（配布）ビルドのモックモードでは、自分の募集・近況報告・
   /// コミュニティ・部屋・メッセージを端末内に保存し、再起動後も残す。
   /// 開発・テストビルドではオフ（シード・テスト動作を壊さないため）。
   /// Supabase モードでは Postgres が永続化するため対象外。
@@ -585,7 +585,7 @@ class AppState extends ChangeNotifier {
           }
         }
       }
-      // 撮影報告
+      // 近況報告
       final cats = await supabaseData.fetchShootReports(me!);
       _shootReports
         ..clear()
@@ -1369,7 +1369,7 @@ class AppState extends ChangeNotifier {
 
   final List<ShootReport> _shootReports = [];
 
-  /// 解決済みとブロック済みユーザーの投稿を除いた撮影報告の一覧
+  /// 解決済みとブロック済みユーザーの投稿を除いた近況報告の一覧
   /// （距離近い順）
   List<ShootReport> get shootReports {
     if (me == null) return const [];
@@ -1390,7 +1390,7 @@ class AppState extends ChangeNotifier {
     return km.isFinite ? distanceLabel(km) : '';
   }
 
-  /// 撮影報告（give / wanted / trade）を登録する
+  /// 近況報告（shoot / post / event / art）を登録する
   Future<ShootReport> registerShootReport({
     required String kind,
     required String itemDescription,
@@ -1454,7 +1454,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// モック: シードの撮影報告を現在地周囲に配置する
+  /// モック: シードの近況報告を現在地周囲に配置する
   void _seedMockShootReports() {
     if (_shootReports.any((p) => p.id.startsWith('cx-seed-'))) return;
     _shootReports.addAll(buildSeedShootReports(_now(), anchorLat, anchorLng));

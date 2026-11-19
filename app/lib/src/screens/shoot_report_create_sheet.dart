@@ -6,8 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import '../services/app_state.dart';
 import '../services/icon_service.dart';
 
-/// 撮影報告の登録シート（FR-7-1相当）。
-/// kind: 'shoot'（撮影）/ 'spot'（場所）/ 'event'（イベント）/ 'art'（絵）
+/// 近況報告の登録シート（FR-7-1相当）。
+/// kind: 'shoot'（撮影）/ 'post'（つぶやき）/ 'event'（イベント）/ 'art'（絵）
 Future<void> showShootReportCreateSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
@@ -92,7 +92,7 @@ class _CreateSheetState extends State<_CreateSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('撮影報告を投稿する',
+            Text('近況報告を投稿する',
                 style: theme.textTheme.titleLarge!
                     .copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
@@ -104,9 +104,9 @@ class _CreateSheetState extends State<_CreateSheet> {
                   label: Text('撮影'),
                 ),
                 ButtonSegment(
-                  value: 'spot',
-                  icon: Icon(Icons.place),
-                  label: Text('場所'),
+                  value: 'post',
+                  icon: Icon(Icons.chat_bubble_outline),
+                  label: Text('つぶやき'),
                 ),
                 ButtonSegment(
                   value: 'event',
@@ -127,11 +127,11 @@ class _CreateSheetState extends State<_CreateSheet> {
               _kind == 'shoot'
                   ? '撮ってきたコスプレ写真の報告です。\n'
                       '※本人が写る画像は本人・撮影者の許諾を得たものだけ投稿してください。'
-                  : _kind == 'spot'
-                      ? 'おすすめの撮影スポット・状況の報告です。\n'
-                          '※私有地・撮影禁止場所の無断撮影はやめましょう。'
+                  : _kind == 'post'
+                      ? '近況・ひとことのつぶやきです。\n'
+                          '※撮影予定や準備の進みなど、コス仲間に伝えたい近況を報告しましょう。'
                       : _kind == 'event'
-                          ? 'イベント会場での撮影報告です。\n'
+                          ? 'イベント会場での報告です。\n'
                               '※会場の撮影規約・参加者の許諾を守ってください。'
                           : '描いた絵・ファンアートの投稿です。\n'
                               '※他人の作品の無断転載・トレースは禁止です。'
@@ -195,7 +195,7 @@ class _CreateSheetState extends State<_CreateSheet> {
               controller: _areaName,
               maxLength: 30,
               decoration: InputDecoration(
-                labelText: _kind == 'art' ? '地域・イベント名（絵は任意）' : '撮影した場所',
+                labelText: _kind == 'art' ? '地域・イベント名（絵は任意）' : '場所',
                 hintText: '例: ○○市中央公園 / ○○イベント会場',
                 border: OutlineInputBorder(),
                 counterText: '',

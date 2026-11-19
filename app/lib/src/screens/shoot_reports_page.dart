@@ -10,9 +10,9 @@ import 'shoot_report_create_sheet.dart';
 import 'user_detail_screen.dart';
 import 'widgets.dart';
 
-/// 「撮影報告」タブ: コスプレの撮影・画像の報告を近隣で共有する
+/// 「近況報告」タブ: コスプレの近況・撮影・画像の報告を近隣で共有する
 /// （FR-7-1〜7-4 相当）。
-/// kind: 'shoot'（撮影）/ 'spot'（場所）/ 'event'（イベント）/ 'art'（絵）。
+/// kind: 'shoot'（撮影）/ 'post'（つぶやき）/ 'event'（イベント）/ 'art'（絵）。
 /// 被写体・撮影者・場所の許諾を確認できた画像のみ投稿する。
 class ShootReportsPage extends StatefulWidget {
   const ShootReportsPage({super.key});
@@ -22,7 +22,7 @@ class ShootReportsPage extends StatefulWidget {
 }
 
 class _ShootReportsPageState extends State<ShootReportsPage> {
-  String _filter = 'all'; // 'all' | 'shoot' | 'spot' | 'event' | 'art'
+  String _filter = 'all'; // 'all' | 'shoot' | 'post' | 'event' | 'art'
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class _ShootReportsPageState extends State<ShootReportsPage> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   Text(
-                    '撮影報告',
+                    '近況報告',
                     style: theme.textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -58,7 +58,7 @@ class _ShootReportsPageState extends State<ShootReportsPage> {
                     segments: const [
                       ButtonSegment(value: 'all', label: Text('すべて')),
                       ButtonSegment(value: 'shoot', label: Text('撮影')),
-                      ButtonSegment(value: 'spot', label: Text('場所')),
+                      ButtonSegment(value: 'post', label: Text('つぶやき')),
                       ButtonSegment(value: 'event', label: Text('イベント')),
                       ButtonSegment(value: 'art', label: Text('絵')),
                     ],
@@ -68,7 +68,7 @@ class _ShootReportsPageState extends State<ShootReportsPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '近くで報告されたコスプレの撮影・画像・スポット情報を'
+                    '近くのコス仲間の近況・撮影・イベント・絵の報告を'
                     '近い順に表示します。報告を見て、撮影仲間や同じ作品の'
                     'コス友達とつながりましょう。',
                     style: theme.textTheme.bodySmall,
@@ -88,7 +88,7 @@ class _ShootReportsPageState extends State<ShootReportsPage> {
                       child: Center(
                         child: Text(
                           '近くに報告はまだありません。\n'
-                          '「報告する」から最初の撮影報告をお願いします。',
+                          '「報告する」から最初の近況報告をお願いします。',
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodySmall,
                         ),
@@ -111,27 +111,27 @@ class _ShootReportsPageState extends State<ShootReportsPage> {
     final isMine = d.posterId == appState.me!.id;
     final now = DateTime.now();
     final shootColor = Colors.teal.shade700;
-    final spotColor = Colors.blue.shade700;
+    final postColor = Colors.blue.shade700;
     final eventColor = Colors.deepPurple.shade700;
     final artColor = Colors.orange.shade700;
     final color = d.isShoot
         ? shootColor
-        : (d.isSpot ? spotColor : (d.isEvent ? eventColor : artColor));
+        : (d.isPost ? postColor : (d.isEvent ? eventColor : artColor));
     final bg = d.isShoot
         ? Colors.teal.shade50
-        : (d.isSpot
+        : (d.isPost
             ? Colors.blue.shade50
             : (d.isEvent ? Colors.deepPurple.shade50 : Colors.orange.shade50));
     final border = d.isShoot
         ? Colors.teal.shade200
-        : (d.isSpot
+        : (d.isPost
             ? Colors.blue.shade200
             : (d.isEvent
                 ? Colors.deepPurple.shade200
                 : Colors.orange.shade200));
     final label = d.isShoot
         ? '撮影'
-        : (d.isSpot ? '場所' : (d.isEvent ? 'イベント' : '絵'));
+        : (d.isPost ? 'つぶやき' : (d.isEvent ? 'イベント' : '絵'));
     return Card(
       margin: const EdgeInsets.only(top: 10),
       child: Padding(

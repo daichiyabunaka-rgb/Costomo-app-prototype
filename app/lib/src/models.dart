@@ -413,19 +413,19 @@ class CommunityEvent {
   }
 }
 
-/// コスプレの「撮影報告」掲示板（近隣での写真・画像・創作の報告・共有）。
+/// コスプレの「近況報告」掲示板（近隣での近況・撮影・創作の報告・共有）。
 /// kind: 'shoot' = 撮影（撮ってきた写真の報告）
-///       'spot'  = 場所（撮影スポットの報告）
-///       'event' = イベント（イベント会場での撮影報告）
+///       'post'  = つぶやき（近況・ひとことの報告）
+///       'event' = イベント（イベント会場での報告）
 ///       'art'   = 絵（描いた絵・ファンアートの投稿）
 /// 被写体・撮影者・場所の許諾を確認できた画像のみ投稿する。
 class ShootReport {
   final String id;
   final String posterId;
-  final String kind; // 'shoot' | 'spot' | 'event' | 'art'
+  final String kind; // 'shoot' | 'post' | 'event' | 'art'
   final String itemDescription; // キャラ名・作品名・一言タイトル
-  final String areaName; // 撮影した場所・イベント名
-  final String detail; // 撮影状況・ハイライトなどの自由記述
+  final String areaName; // 場所・イベント名
+  final String detail; // 近況・ハイライトなどの自由記述
   final String? photoPath; // 報告写真（端末内パス or 公開URL）
   final double lat;
   final double lng;
@@ -449,8 +449,8 @@ class ShootReport {
   /// 撮影の報告
   bool get isShoot => kind == 'shoot';
 
-  /// 場所の報告
-  bool get isSpot => kind == 'spot';
+  /// つぶやき（近況・ひとこと）
+  bool get isPost => kind == 'post';
 
   /// イベントの報告
   bool get isEvent => kind == 'event';
