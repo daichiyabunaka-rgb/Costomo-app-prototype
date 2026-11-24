@@ -60,7 +60,7 @@ flutter run -d <デバイスID>     # Android 端末（flutter devices で確認
 flutter build apk --release     # APK ビルド
 ```
 
-接続DBは「ともつく！」シリーズ共通の Supabase プロジェクトです（接続情報と鍵の扱いは tomotsuku-memo リポジトリ参照）。
+接続DBは「ともつく！」シリーズ共通の Supabase プロジェクトです（接続情報と鍵の扱いは tomotsuku-memo リポジトリ参照）。APKのDB接続切り替えはビルド時の GitHub Secrets（SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY）で行われます（未設定だとモックモードでビルドされる。**v1.0.10からDB接続ビルド**）。
 
 ```powershell
 flutter build apk --release --dart-define=SUPABASE_URL=https://hlcsuogoghrgqabkaqxm.supabase.co --dart-define=SUPABASE_PUBLISHABLE_KEY=<tomotsuku-memo参照>
